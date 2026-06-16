@@ -1,0 +1,26 @@
+[
+    {
+        "id": "todo_6a312b6b89d921.04171113",
+        "title": "Haris Naveed Programmer",
+        "done": false,
+        "createdAt": "2026-06-16T10:54:35+00:00"
+    },
+    {
+        "id": "starter-1",
+        "title": "Design the todo flow",
+        "done": true,
+        "createdAt": "2026-06-16T08:00:00.000Z"
+    },
+    {
+        "id": "starter-2",
+        "title": "Build add, edit, delete actions",
+        "done": false,
+        "createdAt": "2026-06-16T08:15:00.000Z"
+    },
+    {
+        "id": "starter-3",
+        "title": "Polish responsive UI",
+        "done": false,
+        "createdAt": "2026-06-16T08:30:00.000Z"
+    }
+]

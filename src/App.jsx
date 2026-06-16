@@ -6,8 +6,8 @@ const todoExamples = {
   graphql: GraphQL,
 };
 
-// const ActiveTodo = todoExamples.rest
-const ActiveTodo = todoExamples.graphql;
+const ActiveTodo = todoExamples.rest;
+// const ActiveTodo = todoExamples.graphql;
 
 function App() {
   return <ActiveTodo />;

@@ -1,6 +1,6 @@
 import TodoBoard from "./TodoBoard";
 
-const API_URL = "http://localhost/React/todo-chatgpt/api/todo-graphql.php";
+const API_URL = "http://localhost/React/daily-task-board/api/todo-graphql.php";
 
 async function graphqlRequest(query, variables = {}, operationName = "") {
   const response = await fetch(API_URL, {

@@ -74,7 +74,7 @@ http://127.0.0.1:5173
 PHP runs through XAMPP Apache:
 
 ```txt
-http://localhost/React/todo-chatgpt/api
+http://localhost/React/daily-task-board/api
 ```
 
 The React app sends requests to the PHP API. PHP reads and writes data in:
@@ -101,14 +101,14 @@ This project should be inside your XAMPP `htdocs` folder.
 Current expected path:
 
 ```txt
-C:\xampp\htdocs\React\todo-chatgpt
+C:\xampp\htdocs\React\daily-task-board
 ```
 
 The API URLs in React currently point to:
 
 ```txt
-http://localhost/React/todo-chatgpt/api/todo.php
-http://localhost/React/todo-chatgpt/api/todo-graphql.php
+http://localhost/React/daily-task-board/api/todo.php
+http://localhost/React/daily-task-board/api/todo-graphql.php
 ```
 
 If you rename or move the folder, update the API URLs in:
@@ -129,7 +129,7 @@ Apache
 Then check the REST API in your browser:
 
 ```txt
-http://localhost/React/todo-chatgpt/api/todo.php
+http://localhost/React/daily-task-board/api/todo.php
 ```
 
 You should see JSON data from `todos.json`.
@@ -177,7 +177,7 @@ src/App.jsx
 Use REST:
 
 ```jsx
-const ActiveTodo = todoExamples.rest
+const ActiveTodo = todoExamples.rest;
 // const ActiveTodo = todoExamples.graphql
 ```
 
@@ -185,7 +185,7 @@ Use GraphQL:
 
 ```jsx
 // const ActiveTodo = todoExamples.rest
-const ActiveTodo = todoExamples.graphql
+const ActiveTodo = todoExamples.graphql;
 ```
 
 Both components render the same UI through `TodoBoard.jsx`. Only the API logic changes.
@@ -223,72 +223,72 @@ api/todos.json
 Base URL:
 
 ```txt
-http://localhost/React/todo-chatgpt/api/todo.php
+http://localhost/React/daily-task-board/api/todo.php
 ```
 
 ### REST Endpoints
 
-| Method | URL | Description |
-| --- | --- | --- |
-| `GET` | `/api/todo.php` | Get all tasks |
-| `POST` | `/api/todo.php` | Add a new task |
-| `PUT` | `/api/todo.php` | Update a task title or done status |
-| `DELETE` | `/api/todo.php?id=TASK_ID` | Delete one task |
-| `DELETE` | `/api/todo.php?completed=1` | Clear completed tasks |
+| Method   | URL                         | Description                        |
+| -------- | --------------------------- | ---------------------------------- |
+| `GET`    | `/api/todo.php`             | Get all tasks                      |
+| `POST`   | `/api/todo.php`             | Add a new task                     |
+| `PUT`    | `/api/todo.php`             | Update a task title or done status |
+| `DELETE` | `/api/todo.php?id=TASK_ID`  | Delete one task                    |
+| `DELETE` | `/api/todo.php?completed=1` | Clear completed tasks              |
 
 ### REST Examples
 
 Get all tasks:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo.php')
+fetch("http://localhost/React/daily-task-board/api/todo.php");
 ```
 
 Add a task:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo.php', {
-  method: 'POST',
+fetch("http://localhost/React/daily-task-board/api/todo.php", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    title: 'Plan today work',
-    createdAt: '2026-06-16',
+    title: "Plan today work",
+    createdAt: "2026-06-16",
   }),
-})
+});
 ```
 
 Update a task:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo.php', {
-  method: 'PUT',
+fetch("http://localhost/React/daily-task-board/api/todo.php", {
+  method: "PUT",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    id: 'starter-1',
-    title: 'Updated task title',
+    id: "starter-1",
+    title: "Updated task title",
     done: true,
   }),
-})
+});
 ```
 
 Delete a task:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo.php?id=starter-1', {
-  method: 'DELETE',
-})
+fetch("http://localhost/React/daily-task-board/api/todo.php?id=starter-1", {
+  method: "DELETE",
+});
 ```
 
 Clear completed tasks:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo.php?completed=1', {
-  method: 'DELETE',
-})
+fetch("http://localhost/React/daily-task-board/api/todo.php?completed=1", {
+  method: "DELETE",
+});
 ```
 
 ## GraphQL API
@@ -308,33 +308,33 @@ api/todos.json
 Base URL:
 
 ```txt
-http://localhost/React/todo-chatgpt/api/todo-graphql.php
+http://localhost/React/daily-task-board/api/todo-graphql.php
 ```
 
 This project uses a simple GraphQL-style PHP endpoint for learning purposes. It accepts GraphQL query strings and variables, then maps operation names to PHP logic. It does not require Composer or a GraphQL package.
 
 ### GraphQL Operations
 
-| Operation | Type | Description |
-| --- | --- | --- |
-| `Todos` | Query | Get all tasks |
-| `AddTodo` | Mutation | Add a new task |
-| `UpdateTodo` | Mutation | Update task title or done status |
-| `DeleteTodo` | Mutation | Delete one task |
-| `ClearCompleted` | Mutation | Clear completed tasks |
+| Operation        | Type     | Description                      |
+| ---------------- | -------- | -------------------------------- |
+| `Todos`          | Query    | Get all tasks                    |
+| `AddTodo`        | Mutation | Add a new task                   |
+| `UpdateTodo`     | Mutation | Update task title or done status |
+| `DeleteTodo`     | Mutation | Delete one task                  |
+| `ClearCompleted` | Mutation | Clear completed tasks            |
 
 ### GraphQL Examples
 
 Get all tasks:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
-  method: 'POST',
+fetch("http://localhost/React/daily-task-board/api/todo-graphql.php", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    operationName: 'Todos',
+    operationName: "Todos",
     query: `
       query Todos {
         todos {
@@ -347,19 +347,19 @@ fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
     `,
     variables: {},
   }),
-})
+});
 ```
 
 Add a task:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
-  method: 'POST',
+fetch("http://localhost/React/daily-task-board/api/todo-graphql.php", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    operationName: 'AddTodo',
+    operationName: "AddTodo",
     query: `
       mutation AddTodo($title: String!, $createdAt: String) {
         addTodo(title: $title, createdAt: $createdAt) {
@@ -371,23 +371,23 @@ fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
       }
     `,
     variables: {
-      title: 'Prepare daily plan',
-      createdAt: '2026-06-16',
+      title: "Prepare daily plan",
+      createdAt: "2026-06-16",
     },
   }),
-})
+});
 ```
 
 Update a task:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
-  method: 'POST',
+fetch("http://localhost/React/daily-task-board/api/todo-graphql.php", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    operationName: 'UpdateTodo',
+    operationName: "UpdateTodo",
     query: `
       mutation UpdateTodo($id: ID!, $title: String, $done: Boolean) {
         updateTodo(id: $id, title: $title, done: $done) {
@@ -399,46 +399,46 @@ fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
       }
     `,
     variables: {
-      id: 'starter-1',
-      title: 'Updated task title',
+      id: "starter-1",
+      title: "Updated task title",
       done: true,
     },
   }),
-})
+});
 ```
 
 Delete a task:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
-  method: 'POST',
+fetch("http://localhost/React/daily-task-board/api/todo-graphql.php", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    operationName: 'DeleteTodo',
+    operationName: "DeleteTodo",
     query: `
       mutation DeleteTodo($id: ID!) {
         deleteTodo(id: $id)
       }
     `,
     variables: {
-      id: 'starter-1',
+      id: "starter-1",
     },
   }),
-})
+});
 ```
 
 Clear completed tasks:
 
 ```js
-fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
-  method: 'POST',
+fetch("http://localhost/React/daily-task-board/api/todo-graphql.php", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    operationName: 'ClearCompleted',
+    operationName: "ClearCompleted",
     query: `
       mutation ClearCompleted {
         clearCompleted
@@ -446,7 +446,7 @@ fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
     `,
     variables: {},
   }),
-})
+});
 ```
 
 ## Important Files

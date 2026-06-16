@@ -77,6 +77,25 @@ function require_variable($variables, $name)
     return $variables[$name];
 }
 
+function normalize_created_at_graphql($createdAt)
+{
+    if (!is_string($createdAt) || trim($createdAt) === '') {
+        return gmdate('c');
+    }
+
+    $createdAt = trim($createdAt);
+
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $createdAt)) {
+        return $createdAt . 'T12:00:00';
+    }
+
+    if (strtotime($createdAt) === false) {
+        send_graphql_error('Task date is invalid.');
+    }
+
+    return $createdAt;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     send_graphql_error('GraphQL endpoint accepts POST requests only.', 405);
 }
@@ -110,7 +129,7 @@ if ($operation === 'AddTodo') {
         'id' => uniqid('todo_', true),
         'title' => $title,
         'done' => false,
-        'createdAt' => gmdate('c'),
+        'createdAt' => normalize_created_at_graphql($variables['createdAt'] ?? ''),
     ];
 
     array_unshift($todos, $todo);

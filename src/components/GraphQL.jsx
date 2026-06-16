@@ -45,11 +45,11 @@ function GraphQL() {
 
         return data.todos;
       }}
-      createTask={async (title) => {
+      createTask={async (title, taskDate) => {
         const data = await graphqlRequest(
           `
-            mutation AddTodo($title: String!) {
-              addTodo(title: $title) {
+            mutation AddTodo($title: String!, $createdAt: String) {
+              addTodo(title: $title, createdAt: $createdAt) {
                 id
                 title
                 done
@@ -57,7 +57,7 @@ function GraphQL() {
               }
             }
           `,
-          { title },
+          { title, createdAt: taskDate },
           "AddTodo",
         );
 

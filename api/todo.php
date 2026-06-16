@@ -46,6 +46,25 @@ function get_body()
     return is_array($body) ? $body : [];
 }
 
+function normalize_created_at($createdAt)
+{
+    if (!is_string($createdAt) || trim($createdAt) === '') {
+        return gmdate('c');
+    }
+
+    $createdAt = trim($createdAt);
+
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $createdAt)) {
+        return $createdAt . 'T12:00:00';
+    }
+
+    if (strtotime($createdAt) === false) {
+        send_json(['message' => 'Task date is invalid.'], 422);
+    }
+
+    return $createdAt;
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 $todos = read_todos($dataFile);
 
@@ -65,7 +84,7 @@ if ($method === 'POST') {
         'id' => uniqid('todo_', true),
         'title' => $title,
         'done' => false,
-        'createdAt' => gmdate('c'),
+        'createdAt' => normalize_created_at($body['createdAt'] ?? ''),
     ];
 
     array_unshift($todos, $todo);

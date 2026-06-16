@@ -21,6 +21,70 @@ const filters = [
   { id: 'done', label: 'Done' },
 ]
 
+const dateFilters = [
+  { id: 'all', label: 'All dates' },
+  { id: 'previous', label: 'Previous day' },
+  { id: 'today', label: 'Today' },
+  { id: 'next', label: 'Next day' },
+  { id: 'custom', label: 'Pick date' },
+]
+
+function formatDateKey(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+function relativeDateKey(daysFromToday) {
+  const date = new Date()
+  date.setDate(date.getDate() + daysFromToday)
+
+  return formatDateKey(date)
+}
+
+function taskDateKey(task) {
+  const dateText = String(task.createdAt || '')
+  const dateMatch = dateText.match(/^(\d{4}-\d{2}-\d{2})/)
+
+  if (dateMatch) {
+    return dateMatch[1]
+  }
+
+  const date = new Date(task.createdAt)
+
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+
+  return formatDateKey(date)
+}
+
+function getDateFilterKey(dateFilter, selectedDate) {
+  if (dateFilter === 'previous') return relativeDateKey(-1)
+  if (dateFilter === 'today') return relativeDateKey(0)
+  if (dateFilter === 'next') return relativeDateKey(1)
+  if (dateFilter === 'custom') return selectedDate
+
+  return ''
+}
+
+function formatTaskDate(task) {
+  const dateKey = taskDateKey(task)
+  const date = dateKey ? new Date(`${dateKey}T12:00:00`) : new Date(task.createdAt)
+
+  if (Number.isNaN(date.getTime())) {
+    return 'No date'
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date)
+}
+
 function TodoBoard({
   apiName,
   loadTasks,
@@ -33,6 +97,9 @@ function TodoBoard({
   const [draft, setDraft] = useState('')
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('all')
+  const [dateFilter, setDateFilter] = useState('all')
+  const [selectedDate, setSelectedDate] = useState(formatDateKey(new Date()))
+  const [taskDate, setTaskDate] = useState(formatDateKey(new Date()))
   const [editingId, setEditingId] = useState(null)
   const [editingTitle, setEditingTitle] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -65,14 +132,20 @@ function TodoBoard({
   }, [tasks])
 
   const visibleTasks = useMemo(() => {
+    const selectedDateKey = getDateFilterKey(dateFilter, selectedDate)
+
     return tasks
       .filter((task) => {
         if (filter === 'active') return !task.done
         if (filter === 'done') return task.done
         return true
       })
+      .filter((task) => {
+        if (!selectedDateKey) return true
+        return taskDateKey(task) === selectedDateKey
+      })
       .filter((task) => task.title.toLowerCase().includes(query.toLowerCase()))
-  }, [filter, query, tasks])
+  }, [dateFilter, filter, query, selectedDate, tasks])
 
   async function addTask(event) {
     event.preventDefault()
@@ -82,9 +155,11 @@ function TodoBoard({
     try {
       setIsSaving(true)
       setApiError('')
-      const newTask = await createTask(draft)
+      const newTask = await createTask(draft, taskDate)
 
       setTasks((currentTasks) => [newTask, ...currentTasks])
+      setSelectedDate(taskDate)
+      setDateFilter('custom')
       setDraft('')
     } catch (error) {
       setApiError(error.message)
@@ -237,7 +312,7 @@ function TodoBoard({
         </aside>
 
         <section className="rounded-lg border border-stone-200/80 bg-white/86 p-4 shadow-[0_24px_80px_rgba(20,40,32,0.12)] backdrop-blur sm:p-5 md:p-6">
-          <form onSubmit={addTask} className="flex flex-col gap-3 sm:flex-row">
+          <form onSubmit={addTask} className="grid gap-3 lg:grid-cols-[1fr_auto_auto]">
             <label className="sr-only" htmlFor="new-task">
               New task
             </label>
@@ -247,6 +322,17 @@ function TodoBoard({
               onChange={(event) => setDraft(event.target.value)}
               placeholder="Add a task"
               className="min-h-12 flex-1 rounded-lg border border-stone-300 bg-white px-4 text-base text-stone-950 outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-600/12"
+            />
+            <label className="sr-only" htmlFor="new-task-date">
+              Task date
+            </label>
+            <input
+              id="new-task-date"
+              type="date"
+              value={taskDate}
+              onChange={(event) => setTaskDate(event.target.value)}
+              required
+              className="min-h-12 rounded-lg border border-stone-300 bg-white px-4 text-base font-semibold text-stone-800 outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-600/12"
             />
             <button
               type="submit"
@@ -298,6 +384,45 @@ function TodoBoard({
                   {item.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 rounded-lg border border-stone-200 bg-stone-50 p-3">
+            <div className="grid gap-2 sm:grid-cols-5">
+              {dateFilters.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setDateFilter(item.id)}
+                  className={`min-h-10 rounded-md px-3 py-2 text-sm font-semibold transition ${
+                    dateFilter === item.id
+                      ? 'bg-teal-700 text-white shadow-sm'
+                      : 'bg-white text-stone-600 hover:text-stone-950'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <label
+                className="flex items-center gap-2 text-sm font-semibold text-stone-600"
+                htmlFor="task-date-filter"
+              >
+                <CalendarDays aria-hidden="true" size={17} />
+                Calendar date
+              </label>
+              <input
+                id="task-date-filter"
+                type="date"
+                value={selectedDate}
+                onChange={(event) => {
+                  setSelectedDate(event.target.value)
+                  setDateFilter('custom')
+                }}
+                className="min-h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm font-semibold text-stone-800 outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-600/12"
+              />
             </div>
           </div>
 
@@ -368,7 +493,7 @@ function TodoBoard({
                           </p>
                         )}
                         <p className="mt-1 text-xs font-medium uppercase tracking-[0.12em] text-stone-400">
-                          {task.done ? 'Completed' : 'Open'}
+                          {task.done ? 'Completed' : 'Open'} - {formatTaskDate(task)}
                         </p>
                       </div>
 

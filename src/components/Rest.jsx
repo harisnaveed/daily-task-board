@@ -24,10 +24,10 @@ function Rest() {
     <TodoBoard
       apiName="REST API"
       loadTasks={() => restRequest()}
-      createTask={(title) =>
+      createTask={(title, taskDate) =>
         restRequest('', {
           method: 'POST',
-          body: JSON.stringify({ title }),
+          body: JSON.stringify({ title, createdAt: taskDate }),
         })
       }
       updateTask={(id, changes) =>

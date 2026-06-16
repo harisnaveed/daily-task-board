@@ -10,12 +10,14 @@ Both APIs use the same JSON data file, so you can switch between REST and GraphQ
 ## Features
 
 - Add new tasks
+- Add tasks for a selected date
 - Edit existing tasks
 - Delete tasks
 - Mark tasks as done or active
 - Clear completed tasks
 - Search tasks
 - Filter tasks by all, active, or done
+- Filter tasks by all dates, previous day, today, next day, or a selected calendar date
 - Progress stats for total, active, and completed tasks
 - REST and GraphQL examples side by side
 - PHP backend using a simple JSON file as storage
@@ -188,6 +190,22 @@ const ActiveTodo = todoExamples.graphql
 
 Both components render the same UI through `TodoBoard.jsx`. Only the API logic changes.
 
+## Date Filters
+
+Daily Task Board stores a `createdAt` value for every task in `api/todos.json`.
+
+The UI can filter tasks by:
+
+- All dates
+- Previous day
+- Today
+- Next day
+- A specific date selected from the calendar input
+
+The date filter is client-side and works with both REST and GraphQL modes because both modes load the same task data shape.
+
+When adding a task, the form also includes a task date picker. The selected date is saved in `createdAt`, so the task can later appear under previous day, today, next day, or a custom calendar date.
+
 ## REST API
 
 REST API file:
@@ -236,6 +254,7 @@ fetch('http://localhost/React/todo-chatgpt/api/todo.php', {
   },
   body: JSON.stringify({
     title: 'Plan today work',
+    createdAt: '2026-06-16',
   }),
 })
 ```
@@ -342,8 +361,8 @@ fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
   body: JSON.stringify({
     operationName: 'AddTodo',
     query: `
-      mutation AddTodo($title: String!) {
-        addTodo(title: $title) {
+      mutation AddTodo($title: String!, $createdAt: String) {
+        addTodo(title: $title, createdAt: $createdAt) {
           id
           title
           done
@@ -353,6 +372,7 @@ fetch('http://localhost/React/todo-chatgpt/api/todo-graphql.php', {
     `,
     variables: {
       title: 'Prepare daily plan',
+      createdAt: '2026-06-16',
     },
   }),
 })
